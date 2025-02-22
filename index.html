@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard IoT Real-time</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .card {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px;
+            display: inline-block;
+            min-width: 200px;
+            text-align: center;
+        }
+        .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Monitoring Lingkungan</h1>
+    
+    <div class="card">
+        <h2>Suhu</h2>
+        <div class="value" id="temperature">-</div>
+        <span>°C</span>
+    </div>
+    
+    <div class="card">
+        <h2>Kelembapan</h2>
+        <div class="value" id="humidity">-</div>
+        <span>%</span>
+    </div>
+    
+    <p>Terakhir diperbarui: <span id="timestamp">-</span></p>
+
+    <script>
+        async function updateData() {
+            try {
+                const response = await fetch('data.json?t=' + new Date().getTime());
+                const data = await response.json();
+                
+                document.getElementById('temperature').textContent = data.temperature.toFixed(1);
+                document.getElementById('humidity').textContent = data.humidity.toFixed(1);
+                document.getElementById('timestamp').textContent = new Date().toLocaleString();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        // Update setiap 1 detik
+        setInterval(updateData, 1000);
+        window.onload = updateData;
+    </script>
+</body>
+</html>
