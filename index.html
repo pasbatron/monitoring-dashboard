@@ -40,21 +40,31 @@
     <script>
         async function updateData() {
             try {
-                // const response = await fetch('data.json?t=' + new Date().getTime());
-
-                // const response = await fetch('https://pasbatron.github.io/monitoring-dashboard/data.json');
-                const response = await fetch('https://raw.githubusercontent.com/pasbatron/monitoring-dashboard/main/docs/data.json');
-
+                const response = await fetch('https://pasbatron.github.io/monitoring-dashboard/data.json?t=' + new Date().getTime(), {
+                    cache: "no-cache"
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+        
                 const data = await response.json();
-                
+        
                 document.getElementById('temperature').textContent = data.temperature.toFixed(1);
                 document.getElementById('humidity').textContent = data.humidity.toFixed(1);
                 document.getElementById('timestamp').textContent = new Date().toLocaleString();
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error fetching data:', error);
+                document.getElementById('temperature').textContent = "Error";
+                document.getElementById('humidity').textContent = "Error";
             }
         }
         
+        // Update setiap 1 detik
+        setInterval(updateData, 1000);
+        window.onload = updateData;
+        
+                
         // Update setiap 1 detik
         setInterval(updateData, 1000);
         window.onload = updateData;
